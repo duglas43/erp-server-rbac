@@ -12,23 +12,24 @@ import { LANGUAGES } from '../enums';
 
 export class UpdateUserDto {
   @ApiPropertyOptional()
+  @IsOptional()
   @IsString()
   login: string;
 
   @ApiPropertyOptional()
   @IsOptional()
   @IsString()
-  firstName: string | null;
+  firstName: string;
 
   @ApiPropertyOptional()
   @IsOptional()
   @IsString()
-  lastName: string | null;
+  lastName: string;
 
   @ApiPropertyOptional()
   @IsOptional()
   @IsString()
-  patronymic: string | null;
+  patronymic: string;
 
   @ApiPropertyOptional({ enum: LANGUAGES })
   @IsOptional()
@@ -38,12 +39,18 @@ export class UpdateUserDto {
   @ApiPropertyOptional()
   @IsOptional()
   @IsEmail()
-  email: string | null;
+  email: string;
 
   @ApiPropertyOptional()
   @IsOptional()
   @IsPhoneNumber()
-  phone: string | null;
+  phone: string;
+
+  @ApiPropertyOptional()
+  @IsOptional()
+  @Transform(({ value }) => parseInt(value))
+  @IsInt()
+  filialId: number;
 
   @ApiPropertyOptional({})
   @IsOptional()

@@ -49,4 +49,19 @@ export class DetailsService {
     await detail.destroy();
     return new DetailDto(detail);
   }
+
+  async addParam(
+    id: number,
+    { paramId, value }: { paramId: number; value: string },
+  ) {
+    const detail = await this.detailEntity.findByPk(id);
+    await detail.$add('params', paramId, { through: { value } });
+    return new DetailDto(detail);
+  }
+
+  async removeParam(id: number, paramId: number) {
+    const detail = await this.detailEntity.findByPk(id);
+    await detail.$remove('params', paramId);
+    return new DetailDto(detail);
+  }
 }

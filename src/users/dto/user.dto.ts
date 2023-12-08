@@ -26,6 +26,9 @@ export class UserDto {
   @ApiPropertyOptional()
   lastVisit: string | null;
 
+  @ApiPropertyOptional()
+  filialId: number | null;
+
   @ApiProperty()
   createdAt: Date;
 

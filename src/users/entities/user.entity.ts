@@ -48,6 +48,9 @@ export class UserEntity extends Model {
   @Column
   lastVisit: boolean | null;
 
+  @Column
+  filialId: number | null;
+
   @BelongsToMany(() => RoleEntity, () => UserRoleEntity, 'userId', 'roleId')
   roles: RoleEntity[];
 }

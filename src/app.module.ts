@@ -15,11 +15,16 @@ import { JwtAuthGuard } from './auth/guard';
 import { UserEntity } from './users/entities/user.entity';
 import { RoleEntity } from './roles/entities/role.entity';
 import { UserRoleEntity } from './users/entities';
+import { AddressEntity } from './addresses/entities';
+import { OrderEntity } from './orders/entities/order.entity';
 import { DetailEntity } from './details/entities/detail.entity';
+import { OrderMachineEntity } from './orders/entities/orderMachine.entity';
 import { MachineEntity } from './machines/entities/machine.entity';
 import { MachineDetailEntity } from './machines/entities/machine-detail.entity';
 import { ParamEntity } from './params/entities/param.entity';
 import { DetailParamEntity } from './details/entities/detail-param.entity';
+import { AddressesModule } from './addresses/addresses.module';
+import { OrdersModule } from './orders/orders.module';
 
 @Module({
   imports: [
@@ -49,8 +54,13 @@ import { DetailParamEntity } from './details/entities/detail-param.entity';
         MachineDetailEntity,
         ParamEntity,
         DetailParamEntity,
+        AddressEntity,
+        OrderEntity,
+        OrderMachineEntity,
       ],
     }),
+    AddressesModule,
+    OrdersModule,
   ],
   controllers: [AppController],
   providers: [

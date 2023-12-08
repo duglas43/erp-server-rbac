@@ -21,6 +21,7 @@ import {
   ApiCreatedResponse,
   ApiOkResponse,
   ApiBearerAuth,
+  ApiBody,
 } from '@nestjs/swagger';
 import {
   CustomApiUnauthorizedResponse,
@@ -68,5 +69,33 @@ export class DetailsController {
   @ApiOkResponse({ type: DetailDto })
   remove(@Param('id', ParseIntPipe) id: number) {
     return this.detailsService.remove(id);
+  }
+
+  @Post(':id/param')
+  @ApiBody({
+    schema: {
+      type: 'object',
+      properties: {
+        paramId: { type: 'integer' },
+        value: { type: 'string' },
+      },
+    },
+  })
+  @ApiOkResponse()
+  addParam(
+    @Param('id', ParseIntPipe) id: number,
+    @Body('paramId', ParseIntPipe) paramId: number,
+    @Body() value: string,
+  ) {
+    return this.detailsService.addParam(id, { paramId, value });
+  }
+
+  @Delete(':id/param/:paramId')
+  @ApiOkResponse()
+  removeParam(
+    @Param('id', ParseIntPipe) id: number,
+    @Param('paramId', ParseIntPipe) paramId: number,
+  ) {
+    return this.detailsService.removeParam(id, paramId);
   }
 }
