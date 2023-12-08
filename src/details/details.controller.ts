@@ -1,34 +1,72 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Query,
+  Delete,
+  ParseIntPipe,
+} from '@nestjs/common';
 import { DetailsService } from './details.service';
-import { CreateDetailDto } from './dto/create-detail.dto';
-import { UpdateDetailDto } from './dto/update-detail.dto';
+import {
+  CreateDetailDto,
+  UpdateDetailDto,
+  DetailDto,
+  FindDetailDto,
+} from './dto';
+import {
+  ApiTags,
+  ApiCreatedResponse,
+  ApiOkResponse,
+  ApiBearerAuth,
+} from '@nestjs/swagger';
+import {
+  CustomApiUnauthorizedResponse,
+  CustomApiForbiddenResponse,
+  CustomApiNotFoundResponse,
+} from 'src/types';
 
+@ApiBearerAuth()
+@CustomApiUnauthorizedResponse()
+@CustomApiForbiddenResponse()
+@CustomApiNotFoundResponse()
+@ApiTags('details')
 @Controller('details')
 export class DetailsController {
   constructor(private readonly detailsService: DetailsService) {}
 
   @Post()
+  @ApiCreatedResponse({ type: DetailDto })
   create(@Body() createDetailDto: CreateDetailDto) {
     return this.detailsService.create(createDetailDto);
   }
 
   @Get()
-  findAll() {
-    return this.detailsService.findAll();
+  @ApiOkResponse({ type: DetailDto, isArray: true })
+  findAll(@Query() findDetailDto: FindDetailDto) {
+    return this.detailsService.findAll(findDetailDto);
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.detailsService.findOne(+id);
+  @ApiOkResponse({ type: DetailDto })
+  findOne(@Param('id', ParseIntPipe) id: number) {
+    return this.detailsService.findOne(id);
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateDetailDto: UpdateDetailDto) {
-    return this.detailsService.update(+id, updateDetailDto);
+  @ApiOkResponse({ type: DetailDto })
+  update(
+    @Param('id', ParseIntPipe) id: number,
+    @Body() updateDetailDto: UpdateDetailDto,
+  ) {
+    return this.detailsService.update(id, updateDetailDto);
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.detailsService.remove(+id);
+  @ApiOkResponse({ type: DetailDto })
+  remove(@Param('id', ParseIntPipe) id: number) {
+    return this.detailsService.remove(id);
   }
 }

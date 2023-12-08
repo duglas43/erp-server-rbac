@@ -1,26 +1,52 @@
 import { Injectable } from '@nestjs/common';
-import { CreateDetailDto } from './dto/create-detail.dto';
-import { UpdateDetailDto } from './dto/update-detail.dto';
+import {
+  CreateDetailDto,
+  UpdateDetailDto,
+  DetailDto,
+  FindDetailDto,
+} from './dto';
+import { DetailEntity } from './entities/detail.entity';
+import { InjectModel } from '@nestjs/sequelize';
+import { Op } from 'sequelize';
 
 @Injectable()
 export class DetailsService {
-  create(createDetailDto: CreateDetailDto) {
-    return 'This action adds a new detail';
+  constructor(
+    @InjectModel(DetailEntity)
+    private detailEntity: typeof DetailEntity,
+  ) {}
+
+  async create(dto: CreateDetailDto) {
+    const detail = await this.detailEntity.create({ ...dto });
+    return new DetailDto(detail);
   }
 
-  findAll() {
-    return `This action returns all details`;
+  async findAll(dto: FindDetailDto) {
+    const details = await this.detailEntity.findAll({
+      where: {
+        [Op.or]: [
+          { name: { [Op.like]: `%${dto.query}%` } },
+          { partNumber: { [Op.like]: `%${dto.query}%` } },
+        ],
+      },
+    });
+    return details.map((detail) => new DetailDto(detail));
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} detail`;
+  async findOne(id: number) {
+    const detail = await this.detailEntity.findByPk(id);
+    return new DetailDto(detail);
   }
 
-  update(id: number, updateDetailDto: UpdateDetailDto) {
-    return `This action updates a #${id} detail`;
+  async update(id: number, dto: UpdateDetailDto) {
+    const detail = await this.detailEntity.findByPk(id);
+    await this.detailEntity.update(dto, { where: { id } });
+    return new DetailDto(detail);
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} detail`;
+  async remove(id: number) {
+    const detail = await this.detailEntity.findByPk(id);
+    await detail.destroy();
+    return new DetailDto(detail);
   }
 }

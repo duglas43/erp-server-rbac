@@ -1,4 +1,5 @@
 import { Module } from '@nestjs/common';
+import { APP_GUARD } from '@nestjs/core';
 import { AppController } from './app.controller';
 import { ConfigModule } from '@nestjs/config';
 import { AppService } from './app.service';
@@ -9,6 +10,8 @@ import { MachinesModule } from './machines/machines.module';
 import { ParamsModule } from './params/params.module';
 import { AuthModule } from './auth/auth.module';
 import { SequelizeModule } from '@nestjs/sequelize';
+import { RolesGuard } from './roles/guard';
+import { JwtAuthGuard } from './auth/guard';
 import { UserEntity } from './users/entities/user.entity';
 import { RoleEntity } from './roles/entities/role.entity';
 import { UserRoleEntity } from './users/entities';
@@ -50,6 +53,16 @@ import { DetailParamEntity } from './details/entities/detail-param.entity';
     }),
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [
+    {
+      provide: APP_GUARD,
+      useClass: JwtAuthGuard,
+    },
+    {
+      provide: APP_GUARD,
+      useClass: RolesGuard,
+    },
+    AppService,
+  ],
 })
 export class AppModule {}

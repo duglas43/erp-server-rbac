@@ -1,26 +1,48 @@
 import { Injectable } from '@nestjs/common';
-import { CreateParamDto } from './dto/create-param.dto';
-import { UpdateParamDto } from './dto/update-param.dto';
+import { CreateParamDto, UpdateParamDto, ParamDto, FindParamDto } from './dto';
+import { ParamEntity } from './entities/param.entity';
+import { InjectModel } from '@nestjs/sequelize';
+import { Op } from 'sequelize';
 
 @Injectable()
 export class ParamsService {
-  create(createParamDto: CreateParamDto) {
-    return 'This action adds a new param';
+  constructor(
+    @InjectModel(ParamEntity)
+    private paramEntity: typeof ParamEntity,
+  ) {}
+
+  async create(dto: CreateParamDto) {
+    const param = await this.paramEntity.create({ ...dto });
+    return new ParamDto(param);
   }
 
-  findAll() {
-    return `This action returns all params`;
+  async findAll(dto: FindParamDto) {
+    const params = await this.paramEntity.findAll({
+      where: {
+        [Op.or]: [
+          { name: { [Op.like]: `%${dto.query}%` } },
+          { unit: { [Op.like]: `%${dto.query}%` } },
+          { type: { [Op.like]: `%${dto.query}%` } },
+        ],
+      },
+    });
+    return params.map((param) => new ParamDto(param));
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} param`;
+  async findOne(id: number) {
+    const param = await this.paramEntity.findByPk(id);
+    return new ParamDto(param);
   }
 
-  update(id: number, updateParamDto: UpdateParamDto) {
-    return `This action updates a #${id} param`;
+  async update(id: number, dto: UpdateParamDto) {
+    const param = await this.paramEntity.findByPk(id);
+    await this.paramEntity.update(dto, { where: { id } });
+    return new ParamDto(param);
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} param`;
+  async remove(id: number) {
+    const param = await this.paramEntity.findByPk(id);
+    await param.destroy();
+    return new ParamDto(param);
   }
 }

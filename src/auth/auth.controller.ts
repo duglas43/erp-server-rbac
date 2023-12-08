@@ -9,6 +9,9 @@ import {
   ApiBadRequestResponse,
   ApiForbiddenResponse,
 } from '@nestjs/swagger';
+import { Public } from './decorator';
+
+@Public()
 @ApiTags('auth')
 @Controller('auth')
 export class AuthController {

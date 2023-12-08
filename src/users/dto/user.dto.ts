@@ -24,7 +24,7 @@ export class UserDto {
   email: string | null;
 
   @ApiPropertyOptional()
-  lastVisit: Date | null;
+  lastVisit: string | null;
 
   @ApiProperty()
   createdAt: Date;

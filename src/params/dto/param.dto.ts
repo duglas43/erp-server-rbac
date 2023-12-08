@@ -1,14 +1,17 @@
 import { ApiProperty } from '@nestjs/swagger';
 
-export class DetailDto {
+export class ParamDto {
   @ApiProperty()
   id: number;
 
   @ApiProperty()
-  name: string | null;
+  name: string;
 
   @ApiProperty()
-  partNumber: string | null;
+  unit: string | null;
+
+  @ApiProperty()
+  type: string | null;
 
   @ApiProperty()
   createdAt: Date;
@@ -16,7 +19,7 @@ export class DetailDto {
   @ApiProperty()
   updatedAt: Date | null;
 
-  constructor(partial: Partial<DetailDto>) {
-    Object.assign(this, partial);
+  constructor(model: Partial<ParamDto>) {
+    Object.assign(this, model);
   }
 }

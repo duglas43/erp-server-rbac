@@ -6,7 +6,6 @@ import {
   Patch,
   Param,
   Delete,
-  UseGuards,
   Query,
   ParseIntPipe,
 } from '@nestjs/common';
@@ -16,30 +15,31 @@ import { UserDto } from './dto';
 import {
   ApiTags,
   ApiOkResponse,
-  ApiBearerAuth,
   ApiCreatedResponse,
   ApiBody,
+  ApiBearerAuth,
 } from '@nestjs/swagger';
-import { JwtAuthGuard } from '../auth/guard';
-import { RolesAllowed } from 'src/roles/decorator';
+import {
+  CustomApiUnauthorizedResponse,
+  CustomApiForbiddenResponse,
+  CustomApiNotFoundResponse,
+} from 'src/types';
 import { GetUser } from 'src/auth/decorator';
-import { RolesGuard } from 'src/roles/guard';
-import { PREDEFINE_ROLES } from 'src/roles/enums';
+import { RolesAllowed } from 'src/roles/decorator';
 
 @ApiBearerAuth()
+@CustomApiUnauthorizedResponse()
+@CustomApiForbiddenResponse()
+@CustomApiNotFoundResponse()
 @ApiTags('users')
-@UseGuards(RolesGuard)
-@UseGuards(JwtAuthGuard)
 @Controller('users')
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
   @Post()
-  @RolesAllowed([PREDEFINE_ROLES.ADMIN])
   @ApiCreatedResponse({ type: UserDto })
-  async create(@Body() createUserDto: CreateUserDto) {
-    const data = await this.usersService.create(createUserDto);
-    return data;
+  create(@Body() createUserDto: CreateUserDto) {
+    return this.usersService.create(createUserDto);
   }
 
   @Get()
@@ -62,24 +62,20 @@ export class UsersController {
 
   @Patch(':id')
   @ApiOkResponse({ type: UserDto })
-  async update(
+  update(
     @Param('id', ParseIntPipe) id: number,
     @Body() updateUserDto: UpdateUserDto,
   ) {
-    const data = await this.usersService.update(id, updateUserDto);
-    return data;
+    return this.usersService.update(id, updateUserDto);
   }
 
   @Delete(':id')
-  @RolesAllowed([PREDEFINE_ROLES.ADMIN])
   @ApiOkResponse({ type: UserDto })
-  async remove(@Param('id', ParseIntPipe) id: number) {
-    const data = await this.usersService.remove(id);
-    return data;
+  remove(@Param('id', ParseIntPipe) id: number) {
+    return this.usersService.remove(id);
   }
 
   @Post('/:id/roles')
-  @RolesAllowed([PREDEFINE_ROLES.ADMIN])
   @ApiBody({
     schema: {
       properties: {
@@ -93,16 +89,14 @@ export class UsersController {
     },
   })
   @ApiOkResponse({ type: UserDto })
-  async addRoles(
+  addRoles(
     @Param('id', ParseIntPipe) id: number,
     @Body('roleIds', ParseIntPipe) roleIds: number[],
   ) {
-    const data = await this.usersService.addRoles(id, roleIds);
-    return data;
+    return this.usersService.addRoles(id, roleIds);
   }
 
   @Delete('/:id/roles')
-  @RolesAllowed([PREDEFINE_ROLES.ADMIN])
   @ApiBody({
     schema: {
       properties: {
@@ -116,11 +110,10 @@ export class UsersController {
     },
   })
   @ApiOkResponse({ type: UserDto })
-  async removeRoles(
+  removeRoles(
     @Param('id', ParseIntPipe) id: number,
     @Body('roleIds', ParseIntPipe) roleIds: number[],
   ) {
-    const data = await this.usersService.removeRoles(id, roleIds);
-    return data;
+    return this.usersService.removeRoles(id, roleIds);
   }
 }

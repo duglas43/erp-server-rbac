@@ -14,7 +14,7 @@ export class RoleDto {
   createdAt: Date;
 
   @ApiProperty()
-  updatedAt: Date;
+  updatedAt: Date | null;
 
   constructor(model: Partial<RoleDto>) {
     this.id = model?.id;
