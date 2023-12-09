@@ -25,6 +25,7 @@ import { ParamEntity } from './params/entities/param.entity';
 import { DetailParamEntity } from './details/entities/detail-param.entity';
 import { AddressesModule } from './addresses/addresses.module';
 import { OrdersModule } from './orders/orders.module';
+import { CaslModule } from './casl/casl.module';
 
 @Module({
   imports: [
@@ -61,6 +62,7 @@ import { OrdersModule } from './orders/orders.module';
     }),
     AddressesModule,
     OrdersModule,
+    CaslModule,
   ],
   controllers: [AppController],
   providers: [
