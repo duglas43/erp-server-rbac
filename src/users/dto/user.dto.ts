@@ -35,7 +35,7 @@ export class UserDto {
   @ApiProperty()
   updatedAt: Date | null;
 
-  constructor(model: any) {
+  constructor(model: Partial<UserDto>) {
     this.id = model?.id;
     this.login = model?.login;
     this.firstName = model?.firstName;

@@ -29,6 +29,14 @@ export class AddressDto {
   updatedAt: Date | null;
 
   constructor(model: Partial<AddressDto>) {
-    Object.assign(this, model);
+    this.id = model?.id;
+    this.clientId = model?.clientId;
+    this.index = model?.index;
+    this.city = model?.city;
+    this.district = model?.district;
+    this.street = model?.street;
+    this.building = model?.building;
+    this.createdAt = model?.createdAt;
+    this.updatedAt = model?.updatedAt;
   }
 }

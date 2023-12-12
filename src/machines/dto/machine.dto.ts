@@ -16,7 +16,11 @@ export class MachineDto {
   @ApiProperty()
   updatedAt: Date | null;
 
-  constructor(partial: Partial<MachineDto>) {
-    Object.assign(this, partial);
+  constructor(model: Partial<MachineDto>) {
+    this.id = model?.id;
+    this.name = model?.name;
+    this.partNumber = model?.partNumber;
+    this.createdAt = model?.createdAt;
+    this.updatedAt = model?.updatedAt;
   }
 }

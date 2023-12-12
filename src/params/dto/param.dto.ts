@@ -20,6 +20,11 @@ export class ParamDto {
   updatedAt: Date | null;
 
   constructor(model: Partial<ParamDto>) {
-    Object.assign(this, model);
+    this.id = model?.id;
+    this.name = model?.name;
+    this.unit = model?.unit;
+    this.type = model?.type;
+    this.createdAt = model?.createdAt;
+    this.updatedAt = model?.updatedAt;
   }
 }

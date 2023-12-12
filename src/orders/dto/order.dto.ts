@@ -32,6 +32,15 @@ export class OrderDto {
   updatedAt: Date;
 
   constructor(model: Partial<OrderDto>) {
-    Object.assign(this, model);
+    this.id = model?.id;
+    this.clientId = model?.clientId;
+    this.addressId = model?.addressId;
+    this.responsibleId = model?.responsibleId;
+    this.name = model?.name;
+    this.comment = model?.comment;
+    this.statusCode = model?.statusCode;
+    this.totalPrice = model?.totalPrice;
+    this.createdAt = model?.createdAt;
+    this.updatedAt = model?.updatedAt;
   }
 }
