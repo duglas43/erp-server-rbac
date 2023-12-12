@@ -24,10 +24,7 @@ export class UserDto {
   email: string | null;
 
   @ApiPropertyOptional()
-  lastVisit: string | null;
-
-  @ApiPropertyOptional()
-  filialId: number | null;
+  lastVisit: boolean | null;
 
   @ApiProperty()
   createdAt: Date;

@@ -49,21 +49,17 @@ export class CaslAbilityFactory {
         case ROLES.ADMIN:
           can(ACTIONS.MANAGE, 'all');
         case ROLES.ENGINEER:
-          // Могут выполнять любые операции со своим аккаунтом - не возможно реализовать в ролевой модели
-          can(ACTIONS.MANAGE, UserEntity); // Вместо этого разрешаем выполнять любые операции с пользователями
+          can(ACTIONS.MANAGE, UserEntity);
           can(ACTIONS.MANAGE, DetailEntity);
           can(ACTIONS.MANAGE, ParamEntity);
           can(ACTIONS.MANAGE, DetailParamEntity);
           can(ACTIONS.MANAGE, MachineEntity);
           can(ACTIONS.MANAGE, MachineDetailEntity);
         case ROLES.CLIENT:
-          // Могут выполнять любые операции со своим аккаунтом - не возможно реализовать в ролевой модели
-          can(ACTIONS.MANAGE, UserEntity); // Вместо этого разрешаем выполнять любые операции с пользователями
-          // Могут выполнять любые операции со своими адресами - не возможно реализовать в ролевой модели
-          can(ACTIONS.MANAGE, AddressEntity); // Вместо этого разрешаем выполнять любые операции с адресами
+          can(ACTIONS.MANAGE, UserEntity);
+          can(ACTIONS.MANAGE, AddressEntity);
           can(ACTIONS.CREATE, OrderEntity);
-          // Могут просматривать свои заказы - не возможно реализовать в ролевой модели
-          can(ACTIONS.READ, OrderEntity); // Вместо этого разрешаем просматривать, создавать, обновлять и удалять заказы
+          can(ACTIONS.READ, OrderEntity);
           can(ACTIONS.UPDATE, OrderEntity);
           can(ACTIONS.DELETE, OrderEntity);
           can(ACTIONS.READ, MachineEntity);
@@ -71,12 +67,11 @@ export class CaslAbilityFactory {
           can(ACTIONS.READ, ParamEntity);
           break;
         case ROLES.HR:
-          can(ACTIONS.MANAGE, UserEntity); // Может управлять всеми пользователями
-          cannot(ACTIONS.READ, UserEntity, { id: 1 }); // Не может управлять пользователем с id === 1 - админом
+          can(ACTIONS.MANAGE, UserEntity);
+          cannot(ACTIONS.READ, UserEntity, { id: 1 });
           break;
         case ROLES.MANAGER:
-          // Могут выполнять любые операции со своим аккаунтом - не возможно реализовать в ролевой модели
-          can(ACTIONS.MANAGE, UserEntity); // Вместо этого разрешаем выполнять любые операции с пользователями
+          can(ACTIONS.MANAGE, UserEntity);
           can(ACTIONS.CREATE, OrderEntity);
           can(ACTIONS.READ, OrderEntity);
           can(ACTIONS.UPDATE, OrderEntity, [
@@ -84,10 +79,7 @@ export class CaslAbilityFactory {
             'responsibleId',
             'totalPrice',
           ]);
-          // if (new Date().getMinutes() < 40) {
-          //   can(ACTIONS.DELETE, OrderEntity);
-          // } - Запись не соответствует ролевой модели
-          can(ACTIONS.DELETE, OrderEntity); // Вместо этого разрешаем удалять заказы
+          can(ACTIONS.DELETE, OrderEntity);
           can(ACTIONS.CREATE, MachineEntity);
           can(ACTIONS.READ, DetailEntity);
           can(ACTIONS.READ, ParamEntity);

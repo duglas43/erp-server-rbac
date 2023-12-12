@@ -4,6 +4,7 @@ import { Strategy, ExtractJwt } from 'passport-jwt';
 import { ConfigService } from '@nestjs/config';
 import { UserEntity } from 'src/users/entities/user.entity';
 import { InjectModel } from '@nestjs/sequelize';
+import { CaslAbilityFactory } from 'src/casl/casl-ability.factory/casl-ability.factory';
 
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy, 'jwt') {
@@ -11,6 +12,7 @@ export class JwtStrategy extends PassportStrategy(Strategy, 'jwt') {
     @InjectModel(UserEntity)
     private userEntity: typeof UserEntity,
     configService: ConfigService,
+    private caslAbilityFactory: CaslAbilityFactory,
   ) {
     super({
       jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
@@ -22,6 +24,8 @@ export class JwtStrategy extends PassportStrategy(Strategy, 'jwt') {
       where: { id: payload.sub },
       include: ['roles'],
     });
+    const ability = this.caslAbilityFactory.createForUser(user);
+    user['ability'] = ability;
     return user;
   }
 }

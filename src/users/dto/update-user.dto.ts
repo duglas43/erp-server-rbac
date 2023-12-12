@@ -46,12 +46,6 @@ export class UpdateUserDto {
   @IsPhoneNumber()
   phone: string;
 
-  @ApiPropertyOptional()
-  @IsOptional()
-  @Transform(({ value }) => parseInt(value))
-  @IsInt()
-  filialId: number;
-
   @ApiPropertyOptional({})
   @IsOptional()
   @Transform(({ value }) => value?.map((id) => parseInt(id)) || null)

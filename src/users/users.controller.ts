@@ -25,7 +25,11 @@ import {
   CustomApiNotFoundResponse,
 } from 'src/types';
 import { GetUser } from 'src/auth/decorator';
-import { RolesAllowed } from 'src/roles/decorator';
+import { CheckPolicies } from 'src/casl/decorators';
+import { ACTIONS } from 'src/casl/enums';
+import { AppAbility } from 'src/casl/casl-ability.factory/casl-ability.factory';
+import { GetAbility } from 'src/casl/decorators';
+import { UserEntity } from './entities/user.entity';
 
 @ApiBearerAuth()
 @CustomApiUnauthorizedResponse()
@@ -36,6 +40,9 @@ import { RolesAllowed } from 'src/roles/decorator';
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
+  @CheckPolicies((ability: AppAbility) =>
+    ability.can(ACTIONS.CREATE, UserEntity),
+  )
   @Post()
   @ApiCreatedResponse({ type: UserDto })
   create(@Body() createUserDto: CreateUserDto) {
@@ -44,8 +51,11 @@ export class UsersController {
 
   @Get()
   @ApiOkResponse({ type: UserDto, isArray: true })
-  findAll(@Query() findUserDto: FindUserDto) {
-    return this.usersService.findAll(findUserDto);
+  findAll(
+    @Query() findUserDto: FindUserDto,
+    @GetAbility() ability: AppAbility,
+  ) {
+    return this.usersService.findAll(findUserDto, ability);
   }
 
   @Get('me')
@@ -56,8 +66,11 @@ export class UsersController {
 
   @Get(':id')
   @ApiOkResponse({ type: UserDto })
-  findOne(@Param('id', ParseIntPipe) id: number) {
-    return this.usersService.findOne(id);
+  findOne(
+    @Param('id', ParseIntPipe) id: number,
+    @GetAbility() ability: AppAbility,
+  ) {
+    return this.usersService.findOne(id, ability);
   }
 
   @Patch(':id')
@@ -65,14 +78,18 @@ export class UsersController {
   update(
     @Param('id', ParseIntPipe) id: number,
     @Body() updateUserDto: UpdateUserDto,
+    @GetAbility() ability: AppAbility,
   ) {
-    return this.usersService.update(id, updateUserDto);
+    return this.usersService.update(id, updateUserDto, ability);
   }
 
   @Delete(':id')
   @ApiOkResponse({ type: UserDto })
-  remove(@Param('id', ParseIntPipe) id: number) {
-    return this.usersService.remove(id);
+  remove(
+    @Param('id', ParseIntPipe) id: number,
+    @GetAbility() ability: AppAbility,
+  ) {
+    return this.usersService.remove(id, ability);
   }
 
   @Post('/:id/roles')
@@ -92,8 +109,9 @@ export class UsersController {
   addRoles(
     @Param('id', ParseIntPipe) id: number,
     @Body('roleIds', ParseIntPipe) roleIds: number[],
+    @GetAbility() ability: AppAbility,
   ) {
-    return this.usersService.addRoles(id, roleIds);
+    return this.usersService.addRoles(id, roleIds, ability);
   }
 
   @Delete('/:id/roles')
@@ -113,7 +131,8 @@ export class UsersController {
   removeRoles(
     @Param('id', ParseIntPipe) id: number,
     @Body('roleIds', ParseIntPipe) roleIds: number[],
+    @GetAbility() ability: AppAbility,
   ) {
-    return this.usersService.removeRoles(id, roleIds);
+    return this.usersService.removeRoles(id, roleIds, ability);
   }
 }

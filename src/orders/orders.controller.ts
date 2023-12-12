@@ -23,6 +23,11 @@ import {
   CustomApiForbiddenResponse,
   CustomApiNotFoundResponse,
 } from 'src/types';
+import { CheckPolicies } from 'src/casl/decorators';
+import { AppAbility } from 'src/casl/casl-ability.factory/casl-ability.factory';
+import { ACTIONS } from 'src/casl/enums';
+import { OrderEntity } from './entities';
+import { GetAbility } from 'src/casl/decorators/get-ability.decorator';
 
 @ApiBearerAuth()
 @CustomApiUnauthorizedResponse()
@@ -34,6 +39,9 @@ export class OrdersController {
   constructor(private readonly ordersService: OrdersService) {}
 
   @Post()
+  @CheckPolicies((ability: AppAbility) =>
+    ability.can(ACTIONS.CREATE, OrderEntity),
+  )
   @ApiCreatedResponse({ type: OrderDto })
   create(@Body() createOrderDto: CreateOrderDto) {
     return this.ordersService.create(createOrderDto);
@@ -41,14 +49,20 @@ export class OrdersController {
 
   @Get()
   @ApiOkResponse({ type: OrderDto, isArray: true })
-  findAll(@Query() findOrderDto: FindOrderDto) {
-    return this.ordersService.findAll(findOrderDto);
+  findAll(
+    @Query() findOrderDto: FindOrderDto,
+    @GetAbility() ability: AppAbility,
+  ) {
+    return this.ordersService.findAll(findOrderDto, ability);
   }
 
   @Get(':id')
   @ApiOkResponse({ type: OrderDto })
-  findOne(@Param('id', ParseIntPipe) id: number) {
-    return this.ordersService.findOne(id);
+  findOne(
+    @Param('id', ParseIntPipe) id: number,
+    @GetAbility() ability: AppAbility,
+  ) {
+    return this.ordersService.findOne(id, ability);
   }
 
   @Patch(':id')
@@ -56,14 +70,18 @@ export class OrdersController {
   update(
     @Param('id', ParseIntPipe) id: number,
     @Body() updateOrderDto: UpdateOrderDto,
+    @GetAbility() ability: AppAbility,
   ) {
-    return this.ordersService.update(id, updateOrderDto);
+    return this.ordersService.update(id, updateOrderDto, ability);
   }
 
   @Delete(':id')
   @ApiOkResponse({ type: OrderDto })
-  remove(@Param('id', ParseIntPipe) id: number) {
-    return this.ordersService.remove(id);
+  remove(
+    @Param('id', ParseIntPipe) id: number,
+    @GetAbility() ability: AppAbility,
+  ) {
+    return this.ordersService.remove(id, ability);
   }
 
   @Post(':id/machine')
@@ -78,8 +96,9 @@ export class OrdersController {
     @Param('id', ParseIntPipe) id: number,
     @Body('machineId', ParseIntPipe) machineId: number,
     @Body('count', ParseIntPipe) count: number,
+    @GetAbility() ability: AppAbility,
   ) {
-    return this.ordersService.addMachine(id, { machineId, count });
+    return this.ordersService.addMachine(id, { machineId, count }, ability);
   }
 
   @Delete(':id/machine/:machineId')
@@ -87,7 +106,8 @@ export class OrdersController {
   removeMachine(
     @Param('id', ParseIntPipe) id: number,
     @Param('machineId', ParseIntPipe) machineId: number,
+    @GetAbility() ability: AppAbility,
   ) {
-    return this.ordersService.removeMachine(id, machineId);
+    return this.ordersService.removeMachine(id, machineId, ability);
   }
 }
